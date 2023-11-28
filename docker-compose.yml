@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  dev-db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: mysqlserver
+      MYSQL_DATABASE: blogs
+    ports:
+      - '3333:3306'
