@@ -6,13 +6,17 @@ import { EditBlogDto } from './dto/edit-blog-dto'
 @Controller('blogs')
 export class BlogController {
   constructor(private blogService: BlogService) {}
-  @Post()
-  createBlog(@Body() dto: CreateBlogDto) {
-    return this.blogService.createBlog(dto)
-  }
   @Get()
   getBlogs() {
     return this.blogService.getBlogs()
+  }
+  @Get(':id')
+  getBlogById(@Param('id', ParseIntPipe) id: number) {
+    return this.blogService.getBlogById(id)
+  }
+  @Post()
+  createBlog(@Body() dto: CreateBlogDto) {
+    return this.blogService.createBlog(dto)
   }
   @Patch(':id')
   editBlog(@Param('id', ParseIntPipe) id: number, @Body() dto: EditBlogDto) {

@@ -7,18 +7,31 @@ import { EditBlogDto } from './dto/edit-blog-dto'
 @Injectable()
 export class BlogService {
   constructor(private prisma: PrismaService) {}
-  async createBlog(dto: CreateBlogDto) {
-    const blog = await this.prisma.blog.create({ data: { ...dto } })
-    return {
-      message: BLOG_MESSAGES.CREATE_BLOG_SUCCESS,
-      blog
-    }
-  }
   async getBlogs() {
     const blogs = await this.prisma.blog.findMany()
     return {
       message: BLOG_MESSAGES.GET_BLOGS_SUCCESS,
       blogs
+    }
+  }
+  async getBlogById(id: number) {
+    const blog = await this.prisma.blog.findUnique({
+      where: {
+        id
+      }
+    })
+    if (!blog) {
+      throw new NotFoundException(BLOG_MESSAGES.ID_BLOG_NOT_FOUND)
+    }
+    return {
+      blog
+    }
+  }
+  async createBlog(dto: CreateBlogDto) {
+    const blog = await this.prisma.blog.create({ data: { ...dto } })
+    return {
+      message: BLOG_MESSAGES.CREATE_BLOG_SUCCESS,
+      blog
     }
   }
   async editBlog(id: number, dto: EditBlogDto) {
