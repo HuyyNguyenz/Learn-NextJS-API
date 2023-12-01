@@ -1,14 +1,15 @@
-import { Body, Controller, Post, Get, Patch, Delete, Param, ParseIntPipe } from '@nestjs/common'
+import { Body, Controller, Post, Get, Patch, Delete, Param, ParseIntPipe, Query } from '@nestjs/common'
 import { CreateBlogDto } from './dto'
 import { BlogService } from './blog.service'
-import { EditBlogDto } from './dto/edit-blog-dto'
+import { EditBlogDto } from './dto'
+import { PaginationPipe } from 'src/pipes/pagination.pipe'
 
 @Controller('blogs')
 export class BlogController {
   constructor(private blogService: BlogService) {}
   @Get()
-  getBlogs() {
-    return this.blogService.getBlogs()
+  getBlogs(@Query('limit', PaginationPipe) limit: number, @Query('page', PaginationPipe) page: number) {
+    return this.blogService.getBlogs(limit, page)
   }
   @Get(':id')
   getBlogById(@Param('id', ParseIntPipe) id: number) {

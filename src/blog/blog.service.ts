@@ -2,16 +2,25 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { CreateBlogDto } from './dto'
 import { BLOG_MESSAGES } from 'src/constant/message'
-import { EditBlogDto } from './dto/edit-blog-dto'
+import { EditBlogDto } from './dto'
 
 @Injectable()
 export class BlogService {
   constructor(private prisma: PrismaService) {}
-  async getBlogs() {
-    const blogs = await this.prisma.blog.findMany()
+  async getBlogs(limit: number, page: number) {
+    const total_page = Math.ceil((await this.prisma.blog.count()) / limit)
+    if (page > total_page) {
+      throw new NotFoundException(BLOG_MESSAGES.PAGE_NOT_FOUND)
+    }
+    const blogs = await this.prisma.blog.findMany({
+      skip: (page - 1) * limit,
+      take: limit
+    })
     return {
       message: BLOG_MESSAGES.GET_BLOGS_SUCCESS,
-      blogs
+      blogs,
+      page,
+      total_page
     }
   }
   async getBlogById(id: number) {
